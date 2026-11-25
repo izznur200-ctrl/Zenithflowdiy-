@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#120726">
+<meta name="description" content="ZenithFlow — Gentle reflections for family dynamics and home.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;600;750&display=swap" rel="stylesheet">
+
+<title>ZenithFlow — Family Difficulties</title>
+
+<style>
+:root {
+    --bg-deep: #120726;
+    --bg-mid: #1F0D3B;
+    --neon-purple: #C084FC;
+    --moon-gold: #F5E6D3;
+    --text-main: #ffffff;
+    --text-soft: rgba(255,255,255,.84);
+    --text-muted: rgba(255,255,255,.66);
+    --glass-bg: rgba(255,255,255,.04);
+    --glass-border: rgba(255,255,255,.1);
+    --radius-md: 17px;
+    --radius-xl: 28px;
+    --transition: all .35s cubic-bezier(.22,.61,.36,1);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+    min-height: 100dvh;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text-main);
+    background:
+        radial-gradient(circle at 50% 0%, rgba(122, 56, 217, 0.15) 0%, transparent 50%),
+        linear-gradient(180deg, #0e0518 0%, #1d0a35 100%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+    position: relative;
+    padding: max(24px, env(safe-area-inset-top)) 18px max(30px, env(safe-area-inset-bottom));
+}
+
+.mystical-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.moon-glow {
+    position: absolute;
+    top: -10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(245, 230, 211, 0.1) 0%, transparent 60%);
+    filter: blur(20px);
+}
+
+#waterCanvas {
+    position: fixed; inset: 0; width: 100vw; height: 100vh;
+    z-index: 90; pointer-events: none; opacity: .36;
+}
+
+.page { position: relative; z-index: 10; width: 100%; }
+.container { width: 100%; max-width: 540px; margin: 0 auto; }
+
+.hero {
+    position: relative;
+    padding: 18px 8px 25px;
+    text-align: center;
+}
+
+.hero-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 58px; height: 58px;
+    margin-bottom: 12px;
+    border-radius: 20px;
+    background: rgba(192,132,252,.1);
+    border: 1px solid rgba(192,132,252,.2);
+    box-shadow: inset 1px 1px 2px rgba(255,255,255,.22), 0 8px 20px rgba(30,8,60,.13);
+    font-size: 26px;
+    animation: floatIcon 4s ease-in-out infinite;
+}
+
+@keyframes floatIcon {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.hero h1 {
+    color: #fff; font-family: 'Cinzel', serif;
+    font-size: clamp(23px, 6vw, 28px);
+    font-weight: 750; line-height: 1.15; letter-spacing: -.45px;
+    text-shadow: 0 4px 20px rgba(192,132,252,.3);
+}
+
+.hero p {
+    max-width: 430px; margin: 11px auto 0;
+    color: var(--text-muted); font-size: 14px; line-height: 1.7;
+}
+
+.challenge-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 22px;
+    border-radius: var(--radius-xl);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow:
+        inset 1px 1px 2px rgba(255,255,255,.1),
+        0 20px 50px rgba(0,0,0,.3),
+        0 0 40px rgba(122, 56, 217, 0.1);
+}
+
+.challenge {
+    width: 100%; padding: 0; border: 0; background: none;
+    color: inherit; text-align: left; cursor: pointer;
+}
+
+.challenge-card {
+    position: relative;
+    display: flex; align-items: center; gap: 14px;
+    width: 100%; min-height: 68px; padding: 13px 15px;
+    border-radius: var(--radius-md);
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.08);
+    transition: var(--transition);
+    box-shadow: inset 1px 1px 1px rgba(255,255,255,.05);
+}
+
+.challenge:hover .challenge-card, .challenge:focus-visible .challenge-card {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,.08);
+    border-color: var(--neon-purple);
+    box-shadow: 0 10px 25px rgba(122, 56, 217, 0.15);
+}
+
+.challenge:active .challenge-card { transform: scale(.975); }
+
+.challenge-icon {
+    flex: 0 0 42px; display: flex; align-items: center; justify-content: center;
+    width: 42px; height: 42px;
+    border-radius: 14px;
+    background: rgba(192,132,252,.1);
+    border: 1px solid rgba(192,132,252,.2);
+    font-size: 21px;
+    transition: transform .35s ease, background .35s ease;
+}
+
+.challenge:hover .challenge-icon { transform: scale(1.08) rotate(-5deg); background: rgba(192,132,252,.2); }
+
+.challenge-content { min-width: 0; flex: 1; }
+
+.challenge-title {
+    display: block; color: #fff; font-size: 13px; font-weight: 750;
+    line-height: 1.35; letter-spacing: .5px;
+}
+
+.challenge-desc {
+    display: block; margin-top: 4px; color: var(--text-muted);
+    font-size: 11.5px; line-height: 1.4;
+}
+
+.challenge-arrow {
+    color: rgba(255,255,255,.55); font-size: 18px;
+    transition: transform .3s ease, color .3s ease;
+}
+
+.challenge:hover .challenge-arrow { transform: translateX(3px); color: #fff; }
+
+.back-wrapper { margin-top: 20px; }
+
+.back-btn {
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 14px;
+    padding: 15px 16px; border-radius: var(--radius-md); border: 1px solid rgba(245,230,211,.2);
+    background: rgba(245,230,211,.08); color: #fff; cursor: pointer; transition: var(--transition);
+}
+
+.back-btn:hover { border-color: var(--moon-gold); box-shadow: 0 10px 25px rgba(245,230,211,.1); }
+
+.back-btn .btn-emoji {
+    width: 42px; height: 42px; flex: 0 0 42px; display: flex; align-items: center; justify-content: center;
+    border-radius: 14px; background: rgba(192,132,252,.1); border: 1px solid rgba(192,132,252,.2); font-size: 21px;
+}
+
+.back-btn .btn-text b { color: var(--moon-gold); font-size: 13px; letter-spacing: 1px; }
+
+.footer {
+    text-align: center; padding: 25px 5px 4px;
+    color: rgba(255,255,255,.55); font-size: 11px; letter-spacing: .5px; line-height: 1.5;
+}
+
+.footer span { display: inline-block; margin-top: 5px; color: var(--moon-gold); }
+
+.modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: max(20px, env(safe-area-inset-top)) 18px max(20px, env(safe-area-inset-bottom));
+    background: rgba(5,2,10,.85);
+    backdrop-filter: blur(18px);
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity .35s ease, visibility .35s ease;
+}
+
+.modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
+
+.healing-card {
+    position: relative; width: 100%; max-width: 410px;
+    max-height: min(72vh, 680px);
+    overflow-x: hidden; overflow-y: auto;
+    padding: 28px 23px 25px;
+    border-radius: 30px;
+    background: linear-gradient(145deg, rgba(29,10,53,.95), rgba(14,5,24,.95));
+    border: 1px solid rgba(122, 56, 217, 0.3);
+    color: #fff;
+    transform: translateY(18px) scale(.97);
+    transition: transform .4s cubic-bezier(.22,.61,.36,1);
+    box-shadow: inset 1px 1px 3px rgba(255,255,255,.1), 0 25px 70px rgba(0,0,0,.6);
+}
+
+.modal-overlay.active .healing-card { transform: translateY(0) scale(1); }
+
+.healing-card::-webkit-scrollbar { width: 5px; }
+.healing-card::-webkit-scrollbar-track { background: transparent; }
+.healing-card::-webkit-scrollbar-thumb { background: rgba(192,132,252,.4); border-radius: 99px; }
+
+.healing-card h2 {
+    color: var(--moon-gold); font-family: 'Cinzel', serif;
+    font-size: 22px; font-weight: 800; line-height: 1.3; text-align: center;
+    padding-bottom: 17px; margin-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,.1);
+}
+
+.modal-content { color: rgba(255,255,255,.88); font-size: 14.5px; line-height: 1.75; }
+.modal-content p { margin: 0 0 8px; }
+.modal-content b { color: var(--neon-purple); font-size: .95em; font-weight: 700; }
+
+.quote-box {
+    display: block; margin: 0 auto 20px; padding: 10px 14px;
+    width: max-content; max-width: 100%; border-radius: 12px;
+    background: rgba(192,132,252,.1); border: 1px solid rgba(192,132,252,.2);
+    color: var(--moon-gold); font-size: 12px; line-height: 1.5; font-style: italic; text-align: center;
+}
+
+.section-label { display: block; margin-top: 20px; margin-bottom: 7px; color: var(--neon-purple); font-size: 12.5px; font-weight: 750; }
+
+.ending {
+    margin-top: 19px !important;
+    text-align: center;
+    font-size: 13.5px !important;
+    font-style: italic;
+    color: var(--moon-gold) !important;
+    line-height: 1.6 !important;
+}
+
+.close-btn {
+    margin-top: 16px; min-width: 180px; padding: 12px 22px;
+    border: none; border-radius: 14px;
+    background: var(--moon-gold); color: var(--bg-deep);
+    font-size: 12px; font-weight: 800; letter-spacing: .5px; cursor: pointer;
+    box-shadow: 0 8px 22px rgba(0,0,0,.4); transition: var(--transition);
+}
+
+.close-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(245,230,211,.2); }
+.close-btn:active { transform: scale(.95); }
+
+@media (max-width: 480px) {
+    body { padding-left: 13px; padding-right: 13px; }
+    .challenge-list { padding: 16px; border-radius: 24px; }
+    .challenge-card { padding: 13px 13px; gap: 12px; min-height: 64px; }
+    .challenge-icon { width: 39px; height: 39px; flex-basis: 39px; font-size: 19px; border-radius: 12px; }
+    .challenge-title { font-size: 12.5px; }
+    .healing-card { max-height: 74vh; padding: 25px 19px 22px; border-radius: 26px; }
+    .healing-card h2 { font-size: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .hero-icon, .challenge-card, .challenge-icon, .challenge-arrow, .back-btn, .modal-overlay, .healing-card, .close-btn {
+        animation: none !important;
+        transition: none !important;
+    }
+    #waterCanvas { display: none; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="mystical-bg">
+    <div class="moon-glow"></div>
+</div>
+
+<canvas id="waterCanvas"></canvas>
+
+<main class="page">
+<div class="container">
+
+    <header class="hero">
+        <div class="hero-icon">🏡</div>
+        <h1>Family Difficulties</h1>
+        <p>Like roots beneath the soil, family leaves quiet marks in complex ways. Find a steady pause here to breathe and protect your own calm.</p>
+    </header>
+
+    <section class="challenge-list" aria-label="Family challenges">
+
+        <button class="challenge" type="button" onclick="bukaKadFam('toxic', 'Strained Family Ties', '🚫')">
+            <span class="challenge-card">
+                <span class="challenge-icon">🚫</span>
+                <span class="challenge-content">
+                    <span class="challenge-title">STRAINED FAMILY TIES</span>
+                    <span class="challenge-desc">When someone close at home leaves you feeling worn down</span>
+                </span>
+                <span class="challenge-arrow">›</span>
+            </span>
+        </button>
+
+        <button class="challenge" type="button" onclick="bukaKadFam('boundaries', 'Setting Boundaries', '🚪')">
+            <span class="challenge-card">
+                <span class="challenge-icon">🚪</span>
+                <span class="challenge-content">
+                    <span class="challenge-title">SETTING BOUNDARIES</span>
+                    <span class="challenge-desc">When you need gentle limits to keep your peace</span>
+                </span>
+                <span class="challenge-arrow">›</span>
+            </span>
+        </button>
+
+        <button class="challenge" type="button" onclick="bukaKadFam('divorce', 'Separation & Change', '💔')">
+            <span class="challenge-card">
+                <span class="challenge-icon">💔</span>
+                <span class="challenge-content">
+                    <span class="challenge-title">SEPARATION & CHANGE</span>
+                    <span class="challenge-desc">When familiar family shapes shift and break apart</span>
+                </span>
+                <span class="challenge-arrow">›</span>
+            </span>
+        </button>
+
+        <button class="challenge" type="button" onclick="bukaKadFam('acceptance', 'Feeling Unaccepted', '😔')">
+            <span class="challenge-card">
+                <span class="challenge-icon">😔</span>
+                <span class="challenge-content">
+                    <span class="challenge-title">FEELING UNACCEPTED</span>
+                    <span class="challenge-desc">When the people closest to you do not see your path</span>
+                </span>
+                <span class="challenge-arrow">›</span>
+            </span>
+        </button>
+
+        <button class="challenge" type="button" onclick="bukaKadFam('burnout', 'Caregiver Exhaustion', '😰')">
+            <span class="challenge-card">
+                <span class="challenge-icon">😰</span>
+                <span class="challenge-content">
+                    <span class="challenge-title">CAREGIVER EXHAUSTION</span>
+                    <span class="challenge-desc">When giving to everyone leaves very little for you</span>
+                </span>
+                <span class="challenge-arrow">›</span>
+            </span>
+        </button>
+
+        <button class="challenge" type="button" onclick="bukaKadFam('finance', 'Household Money Strain', '💸')">
+            <span class="challenge-card">
+                <span class="challenge-icon">💸</span>
+                <span class="challenge-content">
+                    <span class="challenge-title">HOUSEHOLD MONEY STRAIN</span>
+                    <span class="challenge-desc">When financial pressure weighs across the home</span>
+                </span>
+                <span class="challenge-arrow">›</span>
+            </span>
+        </button>
+
+        <button class="challenge" type="button" onclick="bukaKadFam('multigen', 'Generational Clashes', '🏘️')">
+            <span class="challenge-card">
+                <span class="challenge-icon">🏘️</span>
+                <span class="challenge-content">
+                    <span class="challenge-title">GENERATIONAL CLASHES</span>
+                    <span class="challenge-desc">When different habits and expectations meet at home</span>
+                </span>
+                <span class="challenge-arrow">›</span>
+            </span>
+        </button>
+
+        <button class="challenge" type="button" onclick="bukaKadFam('screens', 'Screen Habits at Home', '📱')">
+            <span class="challenge-card">
+                <span class="challenge-icon">📱</span>
+                <span class="challenge-content">
+                    <span class="challenge-title">SCREEN HABITS AT HOME</span>
+                    <span class="challenge-desc">When devices crowd out quiet shared time</span>
+                </span>
+                <span class="challenge-arrow">›</span>
+            </span>
+        </button>
+
+        <button class="challenge" type="button" onclick="bukaKadFam('secrets', 'Hidden Truths & Trust', '🤫')">
+            <span class="challenge-card">
+                <span class="challenge-icon">🤫</span>
+                <span class="challenge-content">
+                    <span class="challenge-title">HIDDEN TRUTHS & TRUST</span>
+                    <span class="challenge-desc">When secrets or silence leave trust shaken</span>
+                </span>
+                <span class="challenge-arrow">›</span>
+            </span>
+        </button>
+
+        <button class="challenge" type="button" onclick="bukaKadFam('cycles', 'Shifting Family Patterns', '🌱')">
+            <span class="challenge-card">
+                <span class="challenge-icon">🌱</span>
+                <span class="challenge-content">
+                    <span class="challenge-title">SHIFTING FAMILY PATTERNS</span>
+                    <span class="challenge-desc">When you choose a gentler way forward</span>
+                </span>
+                <span class="challenge-arrow">›</span>
+            </span>
+        </button>
+
+    </section>
+
+    <div class="back-wrapper">
+        <a href="index.html" onclick="window.location.replace('index.html'); return false;" class="back-btn" style="text-decoration:none;">
+            <span class="btn-emoji">↩️</span>
+            <span class="btn-text" style="text-align:center;">
+                <b>BACK TO MAIN MENU</b>
+            </span>
+        </a>
+    </div>
+
+    <footer class="footer">
+        Where Night Dew Meets Quiet Hands.
+        <br>
+        <span>ZenithFlow 🌙</span>
+    </footer>
+
+</div>
+</main>
+
+<div class="modal-overlay" id="famModal" role="dialog" aria-modal="true" aria-labelledby="famTitle" aria-hidden="true">
+    <article class="healing-card" id="famCard">
+        <h2 id="famTitle">Topic</h2>
+        <div class="modal-content" id="famText">Content</div>
+    </article>
+    <button class="close-btn" type="button" onclick="tutupKadFam()">Close &amp; Breathe</button>
+</div>
+
+<script>
+const gudangFam = {
+    toxic: `
+        <div class="quote-box">"It is okay to keep a calm distance when home feels heavy."</div>
+        <p>When someone in your family keeps leaving you drained or hurt, feeling torn between duty and self-respect is exhausting.</p>
+        <p>Shared blood does not erase the need for emotional safety.</p>
+        <span class="section-label">A Gentle Reminder 🌙</span>
+        <p>Stepping back to protect your calm is not turning away from care—it is keeping your footing steady.</p>
+        <span class="section-label">A Gentle Step You Can Take ✨</span>
+        <p>When you have a little energy, try just <b>one</b> small thing:</p>
+        <p>• Keep interactions brief or neutral when tension rises.</p>
+        <p>• Say calmly: <i>"I need a little quiet space right now,"</i> without over-explaining.</p>
+        <p class="ending">"Even steady trees grow best where the soil allows room to breathe." 🌙</p>
+    `,
+    boundaries: `
+        <div class="quote-box">"It is okay to set gentle limits to protect your calm."</div>
+        <p>Frequent demands and high expectations can make saying "no" feel like you are letting everyone down.</p>
+        <p>Giving past your limit only leaves you worn thin.</p>
+        <span class="section-label">A Gentle Reminder 🌙</span>
+        <p>Healthy limits are not meant to punish others; they help you stay present without resentment.</p>
+        <span class="section-label">A Gentle Step You Can Take ✨</span>
+        <p>When you have steady energy, try just <b>one</b> small thing:</p>
+        <p>• Start small: <i>"I cannot take that on today, though I can check in later."</i></p>
+        <p>• Expect some pushback at first, and hold your calm anyway.</p>
+        <p class="ending">"Clear banks help calm water flow without overflowing." 🌙</p>
+    `,
+    divorce: `
+        <div class="quote-box">"It is okay to feel grief even when change is needed."</div>
+        <p>When family structures shift or end, the change can feel heavy even when you know it was coming.</p>
+        <p>You may be mourning old routines and the picture of home you once held.</p>
+        <span class="section-label">A Gentle Reminder 🌙</span>
+        <p>Major shifts at home take time to settle. Feeling unsettled does not mean you cannot find steady ground again.</p>
+        <span class="section-label">A Gentle Step You Can Take ✨</span>
+        <p>When you have the energy, try just <b>one</b> small thing:</p>
+        <p>• Give yourself room to feel sad without rushing a timeline.</p>
+        <p>• Keep simple, steady routines where you can.</p>
+        <p class="ending">"When one branch bends or breaks, new shoots can still find quiet light." 🌙</p>
+    `,
+    acceptance: `
+        <div class="quote-box">"It is okay if your path is not fully understood at home."</div>
+        <p>When choices about work, life, or who you are do not match family expectations, feeling unseen at home hurts.</p>
+        <p>Wanting warmth from family while staying true to yourself can feel like a tug-of-war.</p>
+        <span class="section-label">A Gentle Reminder 🌙</span>
+        <p>Not being understood right away does not make your life wrong. You can honor care while still holding your own ground.</p>
+        <span class="section-label">A Gentle Step You Can Take ✨</span>
+        <p>When you have the energy, try just <b>one</b> small thing:</p>
+        <p>• Lean on supportive friends or spaces where you feel understood.</p>
+        <p>• State your boundary plainly: <i>"I know we see this differently, and I still care."</i></p>
+        <p class="ending">"A quiet lotus opens in its own shape even in still, shaded water." 🌙</p>
+    `,
+    burnout: `
+        <div class="quote-box">"It is okay to feel tired even when you care deeply."</div>
+        <p>Carrying daily chores, worries, and family needs nonstop can leave you feeling completely spent.</p>
+        <p>Feeling tired does not mean you care less—it means you are human.</p>
+        <span class="section-label">A Gentle Reminder 🌙</span>
+        <p>You do not have to run on empty to prove devotion. Small pauses keep you from breaking down.</p>
+        <span class="section-label">A Gentle Step You Can Take ✨</span>
+        <p>When you have the energy, try just <b>one</b> small thing:</p>
+        <p>• Ask someone to share one small task today.</p>
+        <p>• Let go of one non-essential standard for the evening.</p>
+        <p class="ending">"Even rich earth rests quietly between seasons so strength can return." 🌙</p>
+    `,
+    finance: `
+        <div class="quote-box">"It is okay if money worry makes the home feel tight."</div>
+        <p>When expenses feel heavy, everyday talks at home can turn tense or guarded quickly.</p>
+        <p>Carrying financial pressure together takes a real toll.</p>
+        <span class="section-label">A Gentle Reminder 🌙</span>
+        <p>A tight financial stretch is a practical challenge to navigate—not a measure of your family's worth.</p>
+        <span class="section-label">A Gentle Step You Can Take ✨</span>
+        <p>When things are calmer, try just <b>one</b> small thing:</p>
+        <p>• Keep explanations simple and reassuring rather than alarming.</p>
+        <p>• Notice one small, low-cost moment that still brings warmth at home.</p>
+        <p class="ending">"Steady roots hold firm through heavy rains and shifting ground." 🌙</p>
+    `,
+    multigen: `
+        <div class="quote-box">"It is okay to feel stretched between different generations at home."</div>
+        <p>Living with different ages and habits under one roof brings plenty of overlapping opinions and routines.</p>
+        <p>Being in the middle while trying to stay respectful and calm can feel tiring.</p>
+        <span class="section-label">A Gentle Reminder 🌙</span>
+        <p>Respect and clear boundaries can exist together. Kindness does not require giving up your own peace.</p>
+        <span class="section-label">A Gentle Step You Can Take ✨</span>
+        <p>When the air is calm, try just <b>one</b> small thing:</p>
+        <p>• Agree on one simple everyday habit everyone can respect.</p>
+        <p>• Speak gently: <i>"Thank you for sharing that; here is how we will handle this part."</i></p>
+        <p class="ending">"Many branches can grow from one root without each taking the exact same shape." 🌙</p>
+    `,
+    screens: `
+        <div class="quote-box">"It is okay to miss unhurried moments without screens."</div>
+        <p>When phones and screens fill every spare minute at home, real conversation can slip into the background.</p>
+        <p>Shifting habits around devices takes patience rather than constant friction.</p>
+        <span class="section-label">A Gentle Reminder 🌙</span>
+        <p>Screens are built to keep attention hooked, so changing the rhythm takes small, steady steps.</p>
+        <span class="section-label">A Gentle Step You Can Take ✨</span>
+        <p>When you have the energy, try just <b>one</b> small thing:</p>
+        <p>• Start with one short screen-free stretch, like during a meal.</p>
+        <p>• Set your own phone aside too so the quiet feels shared.</p>
+        <p class="ending">"Simple moments shared side by side often stay longest in memory." 🌙</p>
+    `,
+    secrets: `
+        <div class="quote-box">"It is okay to feel off-balance when trust is shaken."</div>
+        <p>Discovering hidden matters or long silence at home can make everything feel uncertain all at once.</p>
+        <p>Sorting through hurt and confusion takes time.</p>
+        <span class="section-label">A Gentle Reminder 🌙</span>
+        <p>You do not have to untangle every knot today. Give yourself time to process what feels real to you.</p>
+        <span class="section-label">A Gentle Step You Can Take ✨</span>
+        <p>When you have the energy, try just <b>one</b> small thing:</p>
+        <p>• Let yourself feel what you feel without rushing to a verdict.</p>
+        <p>• Talk through your thoughts with a trusted, calm listener.</p>
+        <p class="ending">"As mist lifts slowly, what feels cloudy today becomes clearer in time." 🌙</p>
+    `,
+    cycles: `
+        <div class="quote-box">"It is okay if changing old family habits feels tiring."</div>
+        <p>Noticing old patterns repeat and choosing to respond differently takes quiet effort—especially when it feels lonely.</p>
+        <p>Shifting long-standing habits does not happen overnight.</p>
+        <span class="section-label">A Gentle Reminder 🌙</span>
+        <p>Choosing a gentler response even once is already meaningful progress. You do not have to be flawless to grow.</p>
+        <span class="section-label">A Gentle Step You Can Take ✨</span>
+        <p>When you have the energy, try just <b>one</b> small thing:</p>
+        <p>• Recognize one calmer choice you made instead of reacting sharply.</p>
+        <p>• Practice one small habit you want to carry forward.</p>
+        <p class="ending">"Quiet new growth often begins unseen beneath familiar ground." 🌙</p>
+    `
+};
+
+const overlayModal = document.getElementById("famModal");
+const tajukModal = document.getElementById("famTitle");
+const teksModal = document.getElementById("famText");
+const kadHealing = document.getElementById("famCard");
+let lastFocusedElement = null;
+
+function bukaKadFam(topik, namaTajuk, emoji) {
+    lastFocusedElement = document.activeElement;
+    tajukModal.textContent = `${emoji} ${namaTajuk}`;
+    teksModal.innerHTML = gudangFam[topik] || `<p>Content sedang dikemas kini...</p>`;
+
+    overlayModal.classList.add("active");
+    overlayModal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+
+    requestAnimationFrame(() => {
+        kadHealing.scrollTop = 0;
+        overlayModal.querySelector(".close-btn").focus();
+    });
+}
+
+function tutupKadFam() {
+    overlayModal.classList.remove("active");
+    overlayModal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+
+    if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+        lastFocusedElement.focus();
+    }
+}
+
+overlayModal.addEventListener("click", function(event) {
+    if (event.target === overlayModal) tutupKadFam();
+});
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape" && overlayModal.classList.contains("active")) {
+        tutupKadFam();
+    }
+});
+
+const canvasAir = document.getElementById("waterCanvas");
+const konteksAir = canvasAir.getContext("2d");
+let koleksiRiak = [];
+let lastRippleTime = 0;
+
+function larasSaizKanvas() {
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    canvasAir.width = window.innerWidth * ratio;
+    canvasAir.height = window.innerHeight * ratio;
+    konteksAir.setTransform(ratio, 0, 0, ratio, 0, 0);
+}
+
+window.addEventListener("resize", larasSaizKanvas);
+larasSaizKanvas();
+
+function janaOmbakRiak(x, y) {
+    const now = performance.now();
+    if (now - lastRippleTime < 90) return;
+    lastRippleTime = now;
+    if (koleksiRiak.length >= 20) koleksiRiak.shift();
+    koleksiRiak.push({ x, y, radius: 2, opacity: .45 });
+}
+
+function lakarSimulasiAir() {
+    konteksAir.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    for (let i = koleksiRiak.length - 1; i >= 0; i--) {
+        const riak = koleksiRiak[i];
+        riak.radius += 2.1;
+        riak.opacity -= .018;
+        if (riak.opacity <= 0) { koleksiRiak.splice(i, 1); continue; }
+        konteksAir.beginPath();
+        konteksAir.arc(riak.x, riak.y, riak.radius, 0, Math.PI * 2);
+        konteksAir.strokeStyle = `rgba(192,132,252,${riak.opacity})`;
+        konteksAir.lineWidth = 1.8;
+        konteksAir.stroke();
+    }
+    requestAnimationFrame(lakarSimulasiAir);
+}
+lakarSimulasiAir();
+
+document.addEventListener("touchstart", function(event) {
+    if (event.touches.length) janaOmbakRiak(event.touches[0].clientX, event.touches[0].clientY);
+}, { passive: true });
+
+document.addEventListener("mousedown", function(event) {
+    janaOmbakRiak(event.clientX, event.clientY);
+});
+
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/service-worker.js")
+    .then(() => { console.log("✅ ZenithFlow Family ready!"); })
+    .catch(() => { console.log("ℹ️ Service worker unavailable."); });
+}
+</script>
+
+</body>
+</html>
